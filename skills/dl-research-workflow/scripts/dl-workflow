@@ -4,6 +4,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ASSETS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../assets"
 
 # JSON 转义函数（jq 已在 check_dependencies 中验证为必需依赖）
 json_escape() {
@@ -68,8 +69,8 @@ check_pdf_parser_config() {
     if [ ! -f ".workflow/config/pdf-parser.json" ]; then
         echo "📄 创建 PDF parser 配置..."
         mkdir -p ".workflow/config"
-        if [ -f "$SCRIPT_DIR/templates/pdf-parser-config.json.template" ]; then
-            cp "$SCRIPT_DIR/templates/pdf-parser-config.json.template" ".workflow/config/pdf-parser.json"
+        if [ -f "$ASSETS_DIR/templates/pdf-parser-config.json.template" ]; then
+            cp "$ASSETS_DIR/templates/pdf-parser-config.json.template" ".workflow/config/pdf-parser.json"
         else
             cat > ".workflow/config/pdf-parser.json" << 'EOF'
 {

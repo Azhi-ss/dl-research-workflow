@@ -94,12 +94,14 @@ echo "✅ 目录结构创建完成"
 echo ""
 echo "📄 生成初始文件..."
 
+TEMPLATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../assets/templates"
+
 # 从模板生成文件
 apply_template() {
     local template="$1"
     local output="$2"
 
-    if [ ! -f "$SCRIPT_DIR/templates/$template" ]; then
+    if [ ! -f "$TEMPLATES_DIR/$template" ]; then
         echo "⚠️  警告: 模板文件不存在: $template"
         return 1
     fi
@@ -112,7 +114,7 @@ apply_template() {
         return 0
     fi
 
-    sed "s/{{timestamp}}/$TIMESTAMP/g; s/{{date}}/$DATE/g; s/{{agent_name}}/dl-workflow-init/g" "$SCRIPT_DIR/templates/$template" > "$output"
+    sed "s/{{timestamp}}/$TIMESTAMP/g; s/{{date}}/$DATE/g; s/{{agent_name}}/dl-workflow-init/g" "$TEMPLATES_DIR/$template" > "$output"
 
     if [ "$VERBOSE" -eq 1 ]; then
         if [ "$INTEGRATE_MODE" -eq 1 ]; then
@@ -172,7 +174,7 @@ apply_template "knowledge-readme.md.template" ".workflow/knowledge/README.md"
 apply_template "milestones.md.template" ".workflow/research/milestones.md"
 
 # 创建消融矩阵（使用完整模板）
-if [ -f "$SCRIPT_DIR/templates/ablation-matrix.md.template" ]; then
+if [ -f "$TEMPLATES_DIR/ablation-matrix.md.template" ]; then
     apply_template "ablation-matrix.md.template" ".workflow/research/ablation/matrix.md"
 else
     cat > ".workflow/research/ablation/matrix.md" << 'EOF'
@@ -206,7 +208,7 @@ apply_template "gitignore.template" ".gitignore"
 apply_template "project-readme.md.template" "README.md"
 
 # 复制所有模板到 .workflow/templates/ 供项目内使用
-cp "$SCRIPT_DIR"/templates/*.template .workflow/templates/ 2>/dev/null || true
+cp "$TEMPLATES_DIR"/*.template .workflow/templates/ 2>/dev/null || true
 
 echo "✅ 初始文件生成完成"
 
