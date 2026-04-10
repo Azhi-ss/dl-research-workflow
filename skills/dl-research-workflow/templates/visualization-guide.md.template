@@ -1,0 +1,165 @@
+# 可视化指南
+
+> 推荐的图表类型和样式
+
+---
+
+## 实验结果可视化
+
+### 训练曲线
+
+**推荐图表类型**: 折线图
+
+**用途**: 展示训练/验证损失、准确率随时间的变化
+
+**样式建议**:
+- X 轴: epoch / step
+- Y 轴: loss / accuracy / metric
+- 多条线: 训练集 vs 验证集，不同配置对比
+
+**模板**:
+```python
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+plt.plot(train_loss, label='Train Loss')
+plt.plot(val_loss, label='Val Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.title('Training Curves')
+plt.grid(True, alpha=0.3)
+plt.savefig('training-curves.png', dpi=150, bbox_inches='tight')
+```
+
+---
+
+### 消融实验对比
+
+**推荐图表类型**: 柱状图 / 点图
+
+**用途**: 展示不同变量组合的效果
+
+**样式建议**:
+- X 轴: 不同配置
+- Y 轴: 指标值
+- 误差棒: 显示标准差或置信区间
+
+**模板**:
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+configs = ['Baseline', '+Attn', '+LN', 'Full']
+means = [82.1, 84.5, 83.8, 85.2]
+stds = [0.5, 0.4, 0.6, 0.3]
+
+x = np.arange(len(configs))
+width = 0.6
+
+plt.figure(figsize=(10, 6))
+plt.bar(x, means, width, yerr=stds, capsize=5, alpha=0.8)
+plt.xlabel('Configuration')
+plt.ylabel('Accuracy (%)')
+plt.xticks(x, configs)
+plt.title('Ablation Study Results')
+plt.grid(True, alpha=0.3, axis='y')
+plt.savefig('ablation-results.png', dpi=150, bbox_inches='tight')
+```
+
+---
+
+### 变量影响分析
+
+**推荐图表类型**: 主效应图 / 交互效应图
+
+**用途**: 展示单个变量的影响和变量间的交互
+
+**样式建议**:
+- 主效应: X 轴=变量值，Y 轴=指标，每条线一个变量
+- 交互效应: X 轴=变量 A，Y 轴=指标，每条线=变量 B 的不同值
+
+---
+
+### 混淆矩阵
+
+**推荐图表类型**: 热力图
+
+**用途**: 分类任务的错误分析
+
+**模板**:
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.savefig('confusion-matrix.png', dpi=150, bbox_inches='tight')
+```
+
+---
+
+### 样本输出/可视化
+
+**推荐图表类型**: 网格图
+
+**用途**: 展示模型的样本输入输出
+
+**模板**:
+```python
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 5, figsize=(15, 6))
+for i, ax in enumerate(axes.flat):
+    ax.imshow(samples[i])
+    ax.set_title(f'Pred: {preds[i]}, True: {labels[i]}')
+    ax.axis('off')
+plt.tight_layout()
+plt.savefig('samples.png', dpi=150, bbox_inches='tight')
+```
+
+---
+
+## 总结展示模板
+
+### 周总结图表清单
+
+- [ ] 训练曲线（关键实验）
+- [ ] 实验结果对比图
+- [ ] 消融实验结果图
+- [ ] 样本输出可视化
+
+### 阶段总结图表清单
+
+- [ ] 所有实验的结果汇总图
+- [ ] 关键发现的可视化
+- [ ] 消融矩阵的热力图
+- [ ] 时间线事件图
+
+---
+
+## 配色建议
+
+### 专业配色
+
+```python
+# 学术风格
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+
+# Seaborn 主题
+import seaborn as sns
+sns.set_style("whitegrid")
+sns.set_context("paper", font_scale=1.2)
+```
+
+---
+
+## 保存建议
+
+- **格式**: PNG (150-300 DPI)
+- **尺寸**: 10x6 英寸（适合幻灯片）
+- **字体**: 足够大（12pt+），确保在远处也能看清
+- **布局**: `bbox_inches='tight'` 避免裁剪

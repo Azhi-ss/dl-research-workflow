@@ -1,0 +1,30 @@
+# DL Research Project
+
+> 这是一个深度学习研究项目。
+
+---
+
+## 对于 AI 助手
+
+**请首先阅读 AGENT.md 来理解项目当前状态。
+
+---
+
+## 对于人类
+
+标准的深度学习研究项目结构。
+
+---
+
+## 快速开始
+
+```bash
+# 查看状态
+dl-workflow status
+
+# 记录事件
+dl-workflow event "描述"
+
+# 记录灵感
+dl-workflow inspire "想法"
+```

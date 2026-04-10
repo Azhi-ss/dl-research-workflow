@@ -1,0 +1,71 @@
+# 数据和大文件
+data/
+checkpoints/
+logs/
+outputs/
+*.pt
+*.pth
+*.bin
+*.h5
+*.npz
+*.pickle
+*.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.workflow/secrets/
+*.env
+*.env.local
+*.env.*.local
+secrets.json
+credentials.json
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb.backup
+
+# PDF 论文（大文件，不提交）
+.workflow/references/papers/pdf/*.pdf
+.workflow/references/papers/pdf/*.PDF
+
+# Workflow 临时文件
+.workflow/snapshots/*.bak
+.workflow/*.tmp

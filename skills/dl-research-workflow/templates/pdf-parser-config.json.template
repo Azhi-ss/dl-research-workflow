@@ -1,0 +1,12 @@
+{
+  "mineru": {
+    "api_endpoint": "https://api.mineru.com/v1",
+    "api_key": "YOUR_MINERU_API_KEY",
+    "timeout": 300,
+    "options": {
+      "extract_images": true,
+      "image_quality": "high",
+      "output_format": "markdown"
+    }
+  }
+}

@@ -1,0 +1,458 @@
+#!/bin/bash
+# DL Research Workflow CLI 工具
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# JSON 转义函数（jq 已在 check_dependencies 中验证为必需依赖）
+json_escape() {
+    local str="$1"
+    printf '%s' "$str" | jq -R . | sed 's/^"\(.*\)"$/\1/'
+}
+
+# 检查依赖
+check_dependencies() {
+    local missing=()
+
+    if ! command -v jq &> /dev/null; then
+        missing+=("jq")
+    fi
+
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "❌ 错误: 缺少依赖: ${missing[*]}"
+        echo ""
+        echo "请安装:"
+        for dep in "${missing[@]}"; do
+            echo "  - $dep: 用包管理器安装 (brew install $dep, apt install $dep, 等)"
+        done
+        exit 1
+    fi
+}
+
+show_help() {
+    cat << 'EOF'
+DL Research Workflow CLI
+
+用法:
+    dl-workflow init                   初始化新项目
+    dl-workflow status                 查看当前状态
+    dl-workflow event <desc>           记录新事件
+    dl-workflow inspire <desc>         记录新灵感
+    dl-workflow parse-pdf <pdf-file>   解析 PDF 论文
+    dl-workflow summarize <type>       生成总结 (daily/weekly)
+    dl-workflow help                   显示帮助
+
+示例:
+    dl-workflow init
+    dl-workflow status
+    dl-workflow event "创建新实验 exp_001"
+    dl-workflow inspire "可以尝试用注意力机制"
+    dl-workflow parse-pdf .workflow/references/papers/pdf/2026-attention.pdf
+    dl-workflow summarize weekly
+EOF
+}
+
+check_initialized() {
+    if [ ! -f "AGENT.md" ]; then
+        echo "❌ 错误: 未找到 AGENT.md"
+        echo "请先运行: dl-workflow init"
+        exit 1
+    fi
+}
+
+# 检查或创建 PDF parser 配置
+check_pdf_parser_config() {
+    if [ ! -f ".workflow/config/pdf-parser.json" ]; then
+        echo "📄 创建 PDF parser 配置..."
+        mkdir -p ".workflow/config"
+        if [ -f "$SCRIPT_DIR/templates/pdf-parser-config.json.template" ]; then
+            cp "$SCRIPT_DIR/templates/pdf-parser-config.json.template" ".workflow/config/pdf-parser.json"
+        else
+            cat > ".workflow/config/pdf-parser.json" << 'EOF'
+{
+  "mineru": {
+    "api_endpoint": "https://api.mineru.com/v1",
+    "api_key": "YOUR_MINERU_API_KEY",
+    "timeout": 300,
+    "options": {
+      "extract_images": true,
+      "image_quality": "high",
+      "output_format": "markdown"
+    }
+  }
+}
+EOF
+        fi
+        echo "⚠️  请编辑 .workflow/config/pdf-parser.json 配置 MinerU API"
+    fi
+}
+
+cmd_init() {
+    bash "$SCRIPT_DIR/init.sh"
+}
+
+cmd_status() {
+    check_initialized
+    echo ""
+    echo "📊 当前状态"
+    echo "============"
+    echo ""
+    if [ -f "AGENT.md" ]; then
+        echo "AGENT.md 存在 ✓"
+    fi
+    if [ -d ".workflow" ]; then
+        echo ".workflow/ 存在 ✓"
+    fi
+    echo ""
+    echo "最近事件:"
+    if [ -f ".workflow/events/index.json" ]; then
+        local count=$(jq '.events | length' ".workflow/events/index.json" 2>/dev/null || echo "0")
+        echo "  已记录 $count 个事件"
+    fi
+    echo ""
+    echo "PDF 论文:"
+    if [ -d ".workflow/references/papers/pdf" ]; then
+        local pdf_count=0
+        for pdf in ".workflow/references/papers/pdf/"*.pdf; do
+            [ -f "$pdf" ] && ((pdf_count++))
+        done
+        echo "  PDF 文件: $pdf_count"
+    fi
+    if [ -d ".workflow/references/papers/parsed" ]; then
+        local parsed_count=0
+        for dir in ".workflow/references/papers/parsed/"*/; do
+            [ -d "$dir" ] && ((parsed_count++))
+        done
+        echo "  已解析: $parsed_count"
+    fi
+    echo ""
+}
+
+cmd_event() {
+    check_initialized
+    local desc="$1"
+    if [ -z "$desc" ]; then
+        echo "❌ 请提供事件描述"
+        echo "用法: dl-workflow event \"描述\""
+        exit 1
+    fi
+
+    local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    local id=$(jq -r '.last_event_id + 1' ".workflow/events/index.json" 2>/dev/null || echo "1")
+    local desc_escaped=$(json_escape "$desc")
+
+    # 创建事件文件
+    local event_file=".workflow/events/$(date -u +"%Y-%m-%d")-$(printf "%03d" "$id").json"
+    cat > "$event_file" << EOF
+{
+  "id": "evt_$(printf "%03d" "$id")",
+  "timestamp": "$timestamp",
+  "agent": "human",
+  "action": "manual-log",
+  "input": {
+    "description": $desc_escaped
+  },
+  "output": {},
+  "reasoning": "人工记录"
+}
+EOF
+
+    # 更新索引（使用 PID 避免竞态条件）
+    if [ -f ".workflow/events/index.json" ]; then
+        jq --arg id "$id" --arg file "$event_file" \
+           '.last_event_id = ($id | tonumber) | .events += [{"id": $id, "file": $file}]' \
+           ".workflow/events/index.json" > ".workflow/events/index.tmp.$$"
+        mv -f ".workflow/events/index.tmp.$$" ".workflow/events/index.json"
+    fi
+
+    echo "✅ 事件已记录: $event_file"
+}
+
+cmd_inspire() {
+    check_initialized
+    local desc="$1"
+    if [ -z "$desc" ]; then
+        echo "❌ 请提供灵感描述"
+        echo "用法: dl-workflow inspire \"描述\""
+        exit 1
+    fi
+
+    local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    local date=$(date -u +"%Y-%m-%d")
+
+    # 找到下一个灵感编号
+    local num=1
+    while [ -f ".workflow/references/inspirations/$date-idea-$(printf "%03d" "$num").md" ]; do
+        num=$((num + 1))
+    done
+
+    # 转义 Markdown 特殊字符
+    local desc_safe=$(printf '%s' "$desc" | sed 's/`/\\`/g')
+
+    local file=".workflow/references/inspirations/$date-idea-$(printf "%03d" "$num").md"
+    cat > "$file" << EOF
+---
+inspiration_id: $date-idea-$(printf "%03d" "$num")
+created_at: $timestamp
+status: idea
+tags:
+---
+
+# 灵感: $desc_safe
+
+## 概述
+
+$desc_safe
+
+---
+
+## 来源
+
+（什么启发了你？论文、代码、讨论...）
+
+---
+
+## 想法详情
+
+### 核心概念
+
+（详细描述这个想法）
+
+### 为什么可能有效
+
+1.
+2.
+3.
+
+### 为什么可能无效
+
+1.
+2.
+3.
+
+---
+
+## 可能的实验设计
+
+### 假设
+
+（我们要验证什么？）
+
+### 变量
+
+| Variable | Values |
+|----------|--------|
+|          |        |
+
+### 基线
+
+（用什么做对比？）
+
+### 成功标准
+
+（怎么算成功？）
+
+---
+
+## 相关
+
+### 相关灵感
+
+- [ ] 灵感 1
+- [ ] 灵感 2
+
+### 相关论文
+
+- [ ] 论文 1
+
+### 相关代码
+
+- [ ] Repo 1
+
+---
+
+## 进展
+
+### 状态历史
+
+| Date | Status | Note |
+|------|--------|------|
+|      |        |      |
+
+### 实验结果
+
+（如果做了实验，结果如何？）
+
+---
+
+## 决策
+
+### 是否 pursue？
+
+（是 / 否 / 待定）
+
+### 理由
+
+---
+
+## 附录
+
+### 草图
+
+（粘贴想法的草图、手写笔记等）
+
+### 原始笔记
+
+（原始的头脑风暴记录）
+EOF
+
+    echo "✅ 灵感已记录: $file"
+}
+
+# 内部版本的 parse-pdf，避免递归调用
+_parse_pdf_single() {
+    local pdf_file="$1"
+    local paper_id="$2"
+
+    # 检查 PDF 文件是否存在
+    if [ ! -f "$pdf_file" ]; then
+        echo "❌ PDF 文件不存在: $pdf_file"
+        return 1
+    fi
+
+    # 生成 paper_id
+    if [ -z "$paper_id" ]; then
+        paper_id=$(basename "$pdf_file" .pdf)
+    fi
+
+    # 创建输出目录
+    local output_dir=".workflow/references/papers/parsed/$paper_id"
+    mkdir -p "$output_dir/images"
+
+    echo "📄 解析 PDF: $pdf_file"
+    echo "   → 输出目录: $output_dir"
+    echo ""
+    echo "⚠️  注意: MinerU API 集成尚未完全实现"
+    echo "   当前需要手动调用 MinerU API 或使用本地部署"
+    echo ""
+    echo "下一步:"
+    echo "  1. 使用 MinerU 解析 PDF"
+    echo "  2. 将 Markdown 保存到: $output_dir/paper.md"
+    echo "  3. 将图片保存到: $output_dir/images/"
+    echo "  4. 基于解析结果创建论文笔记"
+    echo ""
+
+    # 创建占位文件
+    if [ ! -f "$output_dir/paper.md" ]; then
+        cat > "$output_dir/paper.md" << EOF
+# $paper_id
+
+> 解析自: $pdf_file
+> 解析时间: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+---
+
+## 解析结果
+
+（MinerU 解析的 Markdown 内容将放在这里）
+
+---
+
+## 说明
+
+此文件由 \`dl-workflow parse-pdf\` 自动创建。
+请将 MinerU 解析的 Markdown 内容粘贴到此处。
+EOF
+    fi
+
+    echo "✅ 占位文件已创建: $output_dir/paper.md"
+}
+
+cmd_parse_pdf() {
+    check_initialized
+    check_pdf_parser_config
+
+    local pdf_file="$1"
+    local paper_id="$2"
+
+    if [ -z "$pdf_file" ]; then
+        echo "❌ 请提供 PDF 文件路径"
+        echo ""
+        echo "用法:"
+        echo "  dl-workflow parse-pdf <pdf-file> [paper-id]"
+        echo "  dl-workflow parse-pdf --all"
+        echo ""
+        echo "示例:"
+        echo "  dl-workflow parse-pdf .workflow/references/papers/pdf/2026-attention.pdf"
+        echo "  dl-workflow parse-pdf .workflow/references/papers/pdf/2026-attention.pdf attention-is-all-you-need"
+        exit 1
+    fi
+
+    # 处理 --all 选项
+    if [ "$pdf_file" = "--all" ]; then
+        echo "📄 解析所有 PDF..."
+        for pdf in ".workflow/references/papers/pdf/"*.pdf; do
+            if [ -f "$pdf" ]; then
+                echo "  解析: $pdf"
+                _parse_pdf_single "$pdf"
+            fi
+        done
+        echo "✅ 全部解析完成"
+        exit 0
+    fi
+
+    # 处理单个 PDF
+    _parse_pdf_single "$pdf_file" "$paper_id"
+}
+
+cmd_summarize() {
+    check_initialized
+    local type="$1"
+    echo "📝 生成 $type 总结..."
+    echo ""
+    echo "提示: 请让 AI 助手查看以下内容并生成总结:"
+    echo "  - .workflow/events/ 中的事件"
+    echo "  - .workflow/discussions/timeline.md"
+    echo "  - .workflow/research/experiments/"
+    echo ""
+    echo "生成的总结应保存到 .workflow/presentations/$(date -u +"%Y-%m-%d")-$type-summary/"
+}
+
+# 入口
+check_dependencies
+
+# 主命令分发
+case "${1:-help}" in
+    init)
+        cmd_init
+        ;;
+    status)
+        cmd_status
+        ;;
+    event)
+        shift
+        cmd_event "$@"
+        ;;
+    inspire)
+        shift
+        cmd_inspire "$@"
+        ;;
+    parse-pdf)
+        shift
+        cmd_parse_pdf "$@"
+        ;;
+    summarize)
+        shift
+        cmd_summarize "$1"
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        echo "❌ 未知命令: $1"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac

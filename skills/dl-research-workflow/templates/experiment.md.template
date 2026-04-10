@@ -1,0 +1,125 @@
+---
+experiment_id: {{experiment_id}}
+status: active | completed | backlog
+created_at: {{timestamp}}
+tags:
+  - ablation
+  - hyperparameter
+  - architecture
+  - data
+  - evaluation
+priority: P0 | P1 | P2
+---
+
+# Experiment: {{experiment_id}}
+
+## Hypothesis
+
+（我们要验证什么假设？）
+
+## Related Work
+
+- 相关论文:
+- 相关实验:
+- 参考代码:
+
+## Variables
+
+| Variable | Values | Description |
+|----------|--------|-------------|
+|          |        |             |
+
+## Baseline
+
+- 基线实验 ID:
+- 基线指标:
+
+## Metrics
+
+| Metric | Description | Target |
+|--------|-------------|--------|
+|        |             |        |
+
+## Configuration
+
+```yaml
+seed: {{seed}}
+batch_size:
+learning_rate:
+epochs:
+```
+
+### Hardware
+
+- GPU:
+- CPU:
+- RAM:
+
+### Dependencies
+
+- Commit hash: {{commit_hash}}
+- Python version:
+- Key packages:
+
+## Execution Log
+
+- 开始时间:
+- 结束时间:
+- 总耗时:
+- GPU 小时:
+- 重试次数:
+- 早停原因:
+
+## Results
+
+| Metric | Value | vs Baseline |
+|--------|-------|-------------|
+|        |       |             |
+
+### Checkpoints
+
+- Best checkpoint:
+- Final checkpoint:
+
+### Visualizations
+
+- 训练曲线:
+- 样本输出:
+
+## Analysis
+
+### Key Observations
+
+1.
+2.
+3.
+
+### Statistical Significance
+
+（是否做了显著性检验？结果如何？）
+
+### Unexpected Findings
+
+（有什么意外发现？）
+
+## Conclusions
+
+### Hypothesis Accepted / Rejected?
+
+（我们的假设成立吗？为什么？）
+
+### What We Learned
+
+1.
+2.
+3.
+
+## Next Actions
+
+- [ ] 下一步实验 1
+- [ ] 下一步实验 2
+
+## Related Decisions
+
+- 决策 1:
+- 决策 2:
