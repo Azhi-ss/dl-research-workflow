@@ -1,7 +1,7 @@
 ---
 name: dl-research-workflow
 description: 深度学习研究 Agent Workflow - 跨 IDE/AI 工具的记忆化研究环境
-version: 2.2.0
+version: 2.3.0
 ---
 
 # 深度学习研究 Agent Workflow
@@ -308,6 +308,122 @@ dl-workflow help
 6. **用模板** - 不要自己从零开始写
 7. **定期回顾决策** - 从错误中学习
 8. **管理风险** - 持续更新风险登记册
+
+---
+
+## 对话式集成 · Conversational Integration
+
+这个 skill 包含对话式提示模板，可以完全通过 Claude Code 对话来集成到现有项目中，无需终端命令！
+
+### 快速开始 · Quick Start
+
+在现有深度学习项目中，只需对 Claude Code 说：
+
+> "帮我把 dl-research-workflow 集成到这个项目里"
+
+AI 会引导你完成整个过程！
+
+### 4 步对话式工作流 · 4-Step Conversational Flow
+
+#### 第 1 步：初始分析 · Initial Analysis
+AI 分析你现有项目结构，识别：
+- 项目类型（研究/生产/Kaggle）
+- 当前组织程度
+- 已有的目录和文件
+- 需要添加的 workflow 组件
+
+**使用提示**: `prompts/initial-analysis.md`
+
+#### 第 2 步：文件分类 · File Categorization
+AI 帮你整理现有文件：
+- 识别已在正确位置的文件（data/、checkpoints/、logs/）
+- 建议整理松散的 notebook 和配置文件
+- 提供 3 种整理级别（最小/轻度/完整）
+- 始终先建议 git commit 作为安全网
+
+**使用提示**: `prompts/file-categorization.md`
+
+#### 第 3 步：非破坏性合并 · Non-Destructive Merge
+AI 安全地集成 workflow：
+- **只添加新文件** - 不修改/删除你现有的工作
+- 创建 `.workflow/` 目录结构
+- 创建自定义的 `AGENT.md`
+- 处理冲突文件（README.md、.gitignore）时提供选项
+
+**使用提示**: `prompts/merge-strategy.md`
+
+#### 第 4 步：完美工作坊设置 · Perfect Workshop Setup
+AI 帮你打造完美的研究环境：
+- 深度梳理研究问题和计划
+- 设置第一个实验
+- 建立风险登记册
+- 配置知识库（论文笔记、参考代码）
+- 优化 `AGENT.md` 以获得最佳 AI 体验
+- 设置可视化和展示准备
+- 养成良好的工作流习惯
+
+**使用提示**: `prompts/workshop-setup.md`
+
+### 与现有项目集成 · Integrating with Existing Projects
+
+你已经有一个成功的深度学习项目？太棒了！
+
+**我们的方法**:
+- ✅ 保留你所有的现有代码和结构
+- ✅ 只添加 `.workflow/` 和 `AGENT.md`
+- ✅ 非破坏性 - 所有操作都有确认
+- ✅ 尊重你的偏好 - workflow 适应你，而不是反过来
+
+**只需告诉 Claude Code**:
+> "我想把 dl-research-workflow 添加到这个项目，但不要改变我现有的文件结构"
+
+### 对话示例 · Example Conversation
+
+```
+用户: "帮我设置这个研究项目"
+
+Claude: "好的！让我先看看你的项目结构...
+
+太棒了！我看到你已经有：
+✅ data/ 目录 - 完美！
+✅ checkpoints/ 目录 - 很好！
+✅ logs/ 目录 - 优秀！
+
+我建议我们从最温和的方式开始：
+1. 先做个 git commit 作为安全网
+2. 添加 .workflow/ 目录结构
+3. 创建一个自定义的 AGENT.md
+4. 保持你所有现有文件不变
+
+要不要我帮你梳理一下你的研究问题，然后我们再开始？"
+```
+
+### 提示模板 · Prompt Templates
+
+所有对话式提示都在 `prompts/` 目录中：
+
+| 提示 | 用途 |
+|------|------|
+| `initial-analysis.md` | 初始项目结构分析 |
+| `file-categorization.md` | 文件分类与整理 |
+| `merge-strategy.md` | 非破坏性合并策略 |
+| `workshop-setup.md` | 完美研究工作坊设置 |
+
+### CLI 仍然可用 · CLI Still Available
+
+偏好终端命令？没问题！所有现有的 CLI 工具仍然可用：
+
+```bash
+dl-workflow init              # 初始化新项目
+dl-workflow init --integrate  # 集成到现有项目
+dl-workflow status            # 查看状态
+dl-workflow event "描述"      # 记录事件
+dl-workflow inspire "想法"    # 记录灵感
+dl-workflow parse-pdf <file>  # 解析 PDF 论文
+dl-workflow summarize weekly  # 生成周总结
+```
+
+---
 
 ## 版本历史
 

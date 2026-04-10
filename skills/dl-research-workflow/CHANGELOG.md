@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.3.0] - 2026-04-10
+
+### Added
+- `prompts/` 目录 - 对话式提示模板
+- `initial-analysis.md` - 初始项目结构分析提示
+- `file-categorization.md` - 文件分类与整理提示
+- `merge-strategy.md` - 非破坏性合并策略提示
+- `workshop-setup.md` - 完美研究工作坊设置提示
+- `init.sh --integrate` - 集成模式，非破坏性地添加到现有项目
+- `dl-workflow init --integrate` - CLI 集成模式支持
+
+### Improved
+- `skill.md` - 更新到 v2.3.0，添加完整对话式集成文档
+- `USAGE.md` - 添加对话式使用指南（推荐方式）
+- `init.sh` - 完整命令行参数支持（--integrate, --verbose, --help）
+- `dl-workflow` CLI - init 命令支持传递参数给 init.sh
+
+---
+
 ## [2.2.0] - 2026-04-10
 
 ### Added

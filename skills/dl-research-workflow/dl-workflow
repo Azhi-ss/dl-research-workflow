@@ -36,6 +36,7 @@ DL Research Workflow CLI
 
 用法:
     dl-workflow init                   初始化新项目
+    dl-workflow init --integrate       集成到现有项目（非破坏性）
     dl-workflow status                 查看当前状态
     dl-workflow event <desc>           记录新事件
     dl-workflow inspire <desc>         记录新灵感
@@ -45,6 +46,7 @@ DL Research Workflow CLI
 
 示例:
     dl-workflow init
+    dl-workflow init --integrate
     dl-workflow status
     dl-workflow event "创建新实验 exp_001"
     dl-workflow inspire "可以尝试用注意力机制"
@@ -89,7 +91,7 @@ EOF
 }
 
 cmd_init() {
-    bash "$SCRIPT_DIR/init.sh"
+    bash "$SCRIPT_DIR/init.sh" "$@"
 }
 
 cmd_status() {

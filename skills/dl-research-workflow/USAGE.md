@@ -1,5 +1,53 @@
 # 使用指南
 
+## 两种使用方式 · Two Ways to Use
+
+### 方式一：对话式（推荐）· Conversational (Recommended)
+
+**完全无需终端命令！** 只需在 Claude Code 中对话：
+
+#### 场景 1：集成到现有项目
+
+> "我已经有一个深度学习项目了，帮我把 dl-research-workflow 集成进来"
+
+AI 会：
+1. 📊 分析你现有项目结构
+2. 🗂️ 帮你整理文件
+3. ✅ 非破坏性地添加 workflow
+4. 🎯 帮你设置完美的研究工作坊
+
+#### 场景 2：创建新项目
+
+> "帮我创建一个新的深度学习研究项目"
+
+AI 会引导你完成整个设置过程！
+
+#### 场景 3：任何时候需要帮助
+
+> "帮我看看 AGENT.md"
+>
+> "帮我记录一个新的实验"
+>
+> "帮我生成一个周总结"
+
+---
+
+### 方式二：CLI 命令 · CLI Commands
+
+偏好终端？仍然可以使用 CLI：
+
+```bash
+dl-workflow init              # 初始化新项目
+dl-workflow init --integrate  # 集成到现有项目
+dl-workflow status            # 查看状态
+dl-workflow event "描述"      # 记录事件
+dl-workflow inspire "想法"    # 记录灵感
+dl-workflow parse-pdf <file>  # 解析 PDF 论文
+dl-workflow summarize weekly  # 生成周总结
+```
+
+---
+
 ## 安装
 
 将 `dl-research-workflow` 目录复制到你的 Claude Code skills 目录：
@@ -9,6 +57,53 @@ cp -r dl-research-workflow ~/.claude/skills/
 ```
 
 或者直接在项目中使用。
+
+---
+
+## 对话式使用详解 · Conversational Usage Deep Dive
+
+### 第 1 步：告诉 AI 你想要什么
+
+打开 Claude Code，进入你的项目目录，然后说：
+
+> "我想把 dl-research-workflow 用到这个项目里，但不要改变我现有的文件结构"
+
+### 第 2 步：AI 分析你的项目
+
+AI 会先了解你已有的内容：
+- 你的项目类型（研究/生产/Kaggle）
+- 你现有的目录结构
+- 哪些文件已经在正确的位置
+- 需要添加什么
+
+### 第 3 步：安全第一！
+
+AI 会建议：
+> "安全第一！让我们先做个 git commit：
+> ```bash
+> git add -A
+> git commit -m "Pre-workflow integration snapshot"
+> ```"
+
+### 第 4 步：非破坏性集成
+
+AI 会：
+- ✅ 创建 `.workflow/` 目录（全新，不冲突）
+- ✅ 创建 `AGENT.md`（全新，不冲突）
+- ✅ 询问你如何处理冲突文件（README.md、.gitignore）
+- ❌ 不会修改/删除你任何现有文件
+
+### 第 5 步：完美工作坊设置
+
+然后 AI 会帮你：
+- 梳理你的研究问题
+- 设置你的第一个实验
+- 添加你参考的论文
+- 优化 `AGENT.md` 以获得最佳 AI 体验
+
+---
+
+## 快速开始（CLI 方式）
 
 ---
 
