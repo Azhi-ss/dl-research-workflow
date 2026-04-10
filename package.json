@@ -1,0 +1,39 @@
+{
+  "name": "create-dl-research-workflow",
+  "version": "2.2.0",
+  "description": "Deep Learning Research Agent Workflow - A memory-enabled research environment for cross-IDE/AI tool continuity",
+  "main": "index.js",
+  "bin": {
+    "create-dl-research-workflow": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "skills/"
+  ],
+  "scripts": {
+    "test": "echo \"Testing installation...\" && node index.js --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Azhi-ss/dl-research-workflow.git"
+  },
+  "keywords": [
+    "deep-learning",
+    "research",
+    "workflow",
+    "ai",
+    "claude",
+    "claude-code",
+    "skill",
+    "agent"
+  ],
+  "author": "Azhi-ss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Azhi-ss/dl-research-workflow/issues"
+  },
+  "homepage": "https://github.com/Azhi-ss/dl-research-workflow#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
