@@ -1,394 +1,313 @@
 # DL Research Workflow
 
-> A memory-enabled deep learning research environment for seamless continuity across IDEs and AI tools.
+> A file-based handoff protocol for AI-assisted deep learning research.
 >
-> 一个支持记忆的深度学习研究环境，让您在不同 IDE 和 AI 工具间切换时保持连续性。
+> 一个面向 AI 辅助深度学习研究的文件化上下文交接协议，让任何 AI / IDE 打开项目后都能快速接手研究状态。
 
 ---
 
-<p align="center">
-  <a href="#features">Features</a> ·
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="#documentation">Documentation</a> ·
-  <a href="#command-reference">Command Reference</a>
-</p>
+## What / Why · 这是什么，为什么需要
+
+`dl-research-workflow` 解决的核心问题是：**研究上下文容易丢。**
+
+在一个持续数周或数月的深度学习研究项目里，很多重要信息会散落在聊天记录、临时笔记、README、实验日志和代码注释中：
+
+- 这个项目现在到底在研究什么？
+- 当前处于探索、实验、收敛还是发布阶段？
+- 哪些实验已经做过，结论是什么？
+- 哪些路线失败过，为什么失败？
+- 最近有哪些关键决策？
+- 当前卡在哪里？
+- 下一个 AI 会话应该继续做什么？
+
+这个 skill 的目标不是提供一个大而全的研究管理平台，而是提供一套轻量、文件化、工具无关的上下文协议：
+
+- 用 `AGENT.md` 保存当前项目状态和 AI 接手入口
+- 用 `.workflow/research/plan.md` 保存研究计划
+- 用 `.workflow/research/experiments/` 保存实验记录
+- 用 `.workflow/events/` 保存关键事件和决策
+- 用 `dl-workflow` CLI 辅助初始化、查看状态和记录事件
+
+一句话：
+
+> 不要再给每个 AI 会话重复解释你的研究项目。把研究状态写进项目文件，让任何 AI 几分钟内接手。
 
 ---
 
-## Features · 特性
+## 3-Minute Handoff · 三分钟接手标准
 
-### 🧠 **Memory-Enabled Design · 记忆化设计**
+MVP 的成功标准不是目录有多完整，而是：
 
-All state lives in the file system - no tool-lock. Switch between Claude Code, VS Code, Cursor, or any AI tool and pick up exactly where you left off.
+> 一个新 AI 在没有聊天历史的情况下，打开项目 3 分钟内，能准确回答 5 个问题。
 
-所有状态都存储在文件系统中 - 无工具锁定。在 Claude Code、VS Code、Cursor 或任何 AI 工具之间切换，从断点处继续。
+这 5 个问题是：
 
-### 🤖 **AI-First Architecture · AI 优先架构**
+1. 这个项目在研究什么？
+2. 当前处于什么阶段？
+3. 最近做过哪些关键实验或决策？
+4. 当前最重要的阻塞点是什么？
+5. 下一步应该做什么？
 
-`AGENT.md` serves as the single entry point. Any AI opening your project reads this first and immediately understands:
-- Current research phase
-- Weekly goals
-- Blockers
-- Next actions
-- All key links
+如果某个文件、模板或命令不能直接帮助回答这些问题，它就属于 optional / advanced，而不是核心协议。
 
-`AGENT.md` 作为唯一入口点。任何 AI 打开您的项目时首先读取此文件，并立即理解：
-- 当前研究阶段
-- 本周目标
-- 阻塞点
-- 下一步行动
-- 所有关键链接
+---
 
-### 📜 **Event Sourcing · 事件溯源**
+## Core Protocol · 核心协议
 
-Every decision and action is recorded as an immutable event. Full audit trail, complete reproducibility.
+你第一天只需要理解 4 个核心对象：
 
-每个决策和操作都记录为不可变事件。完整审计追踪，完全可复现。
+| 核心对象 | 作用 |
+| --- | --- |
+| `AGENT.md` | AI 首读入口，保存项目当前状态、阻塞点和下一步 |
+| `.workflow/research/plan.md` | 研究目标、假设、路线、评估方式和近期计划 |
+| `.workflow/research/experiments/` | 活跃实验、已完成实验和实验结论 |
+| `.workflow/events/` | 关键事件、决策、失败原因、方向变化和重要发现 |
 
-### 🔬 **Complete Research Tracking · 完整研究追踪**
-
-- **Research Planning** - Plan, RQ tree, risk register, milestones
-- **Experiment Management** - Hypothesis, variables, metrics, full configuration tracking
-- **Discussions** - Timeline view, topic threads, experiment-linked discussions
-- **Knowledge Base** - Findings, patterns, decision reviews
-- **References** - Paper notes (with BibTeX), inspirations, code repos
-- **PDF Parsing** - MinerU API integration for paper parsing
-- **Visualization Guide** - Chart templates and best practices
-
-- **研究计划** - 计划、研究问题树、风险登记册、里程碑
-- **实验管理** - 假设、变量、指标、完整配置追踪
-- **讨论区** - 时间线视图、话题线程、实验关联讨论
-- **知识库** - 发现、模式、决策回顾
-- **参考资料** - 论文笔记（含 BibTeX）、灵感、代码仓库
-- **PDF 解析** - MinerU API 集成用于论文解析
-- **可视化指南** - 图表模板和最佳实践
+其他目录如 `.workflow/knowledge/`、`.workflow/references/`、`.workflow/snapshots/`、`.workflow/presentations/` 都是有用的扩展，但不是新用户第一天必须掌握的内容。
 
 ---
 
 ## Quick Start · 快速开始
 
-### One-Click Install · 一键安装
+### Install · 安装
 
-```bash
-npx create-dl-research-workflow
-```
+运行 `npx create-dl-research-workflow` 安装。
 
-That's it! The skill installs to `~/.claude/skills/dl-research-workflow/`.
+安装后：
 
-就这样！Skill 会安装到 `~/.claude/skills/dl-research-workflow/`。
+- skill 会被放到 `~/.claude/skills/dl-research-workflow/`
+- 在 Linux / macOS 上，安装器还会创建 `~/.local/bin/dl-workflow`
 
-### Initialize Your First Project · 初始化第一个项目
+如果你的 shell 还没有把 `~/.local/bin` 加进 `PATH`，可以先直接运行 `~/.local/bin/dl-workflow help`。
 
-```bash
-mkdir my-awesome-research && cd my-awesome-research
-dl-workflow init
-```
+也可以把 `export PATH="$HOME/.local/bin:$PATH"` 加入 shell 配置后重新加载。
 
-Then open `AGENT.md` and start your research!
+CLI 当前依赖 `jq`。如果未安装，`dl-workflow` 会在启动时提示缺少依赖。
 
-然后打开 `AGENT.md` 开始您的研究！
+常见安装方式：
+
+- macOS：`brew install jq`
+- Ubuntu / Debian：`sudo apt install -y jq`
+
+### Initialize a New Project · 初始化新项目
+
+在新研究项目目录中运行 `dl-workflow init`。
+
+标准初始化会创建 `AGENT.md`、`.workflow/` 和相关模板；如果目标文件已存在，会逐个确认是否覆盖。
+
+初始化完成后，优先编辑：
+
+1. `AGENT.md`
+2. `.workflow/research/plan.md`
+3. `.workflow/research/experiments/active/`
+
+### Integrate Into an Existing Project · 集成到已有项目
+
+在已有项目中运行 `dl-workflow init --integrate`。
+
+集成模式是非破坏性的：只补缺失文件，不覆盖已有文件。它适合给已有研究代码仓库补上一套 AI 接手协议。
 
 ---
 
-## Documentation · 文档
+## Daily Workflow · 日常使用方式
 
-### Directory Structure · 目录结构
+### 1. 接手项目
 
-```
-your-project/
-├── AGENT.md                    # AI Entry Point · AI 入口（必读）
-├── README.md                   # Human Entry Point · 人类入口
-├── .workflow/                  # Agent Workflow Data
-│   ├── events/                 # Immutable event stream · 不可变事件流
-│   ├── research/               # Research planning & progress
-│   │   ├── plan.md
-│   │   ├── research-question-tree.md
-│   │   ├── risk-register.md
-│   │   ├── milestones.md
-│   │   ├── experiments/
-│   │   │   ├── active/
-│   │   │   ├── completed/
-│   │   │   └── backlog/
-│   │   └── ablation/
-│   ├── discussions/            # Discussion area · 讨论区
-│   ├── knowledge/              # Accumulated knowledge · 积累的知识
-│   ├── references/             # References & inspirations
-│   │   ├── papers/
-│   │   │   ├── pdf/            # Original PDFs (gitignored)
-│   │   │   ├── parsed/         # MinerU-parsed Markdown
-│   │   │   └── notes/          # Human-curated notes
-│   │   ├── inspirations/
-│   │   └── repos/
-│   ├── presentations/          # Summaries & visuals
-│   ├── config/                 # Configuration files
-│   └── templates/              # Project-local templates
-├── configs/
-├── data/
-├── notebooks/
-├── scripts/
-├── src/
-│   ├── data/
-│   ├── models/
-│   ├── training/
-│   ├── evaluation/
-│   └── utils/
-├── tests/
-├── checkpoints/
-├── logs/
-└── outputs/
-```
+新 AI 或新会话先读 `AGENT.md`，再按项目中给出的读取顺序补充上下文。
 
-### Core Concepts · 核心概念
+### 2. 查看状态
 
-#### 1. AGENT.md - AI Entry Point · AI 入口
+运行 `dl-workflow status` 查看当前工作流状态。
 
-Any AI opening your project **reads this first**. It contains:
+它用于快速确认：
 
-任何 AI 打开您的项目时**首先读取此文件**。它包含：
+- `AGENT.md` 是否存在
+- `.workflow/` 是否存在
+- 已记录多少事件
+- 论文 PDF 和解析占位目录数量
 
-```markdown
-# Project Status Overview · 项目状态概览
+### 3. 记录关键事件
 
-## Current Research Phase · 当前研究阶段
-[ ] Exploration · 探索阶段 - Trying different ideas
-[ ] Shaping · 定型阶段 - Main architecture solidified
-[x] Optimization · 优化阶段 - Tuning performance
-[ ] Wrap-up · 收尾阶段 - Paper/writing
+运行 `dl-workflow event "描述"` 记录关键事件、实验结论、方向变化或阻塞点。
 
-## Weekly Goals · 本周目标
-- [ ] Complete ablation study A
-- [ ] Test learning rate scheduler
+适合记录：
 
-## Blockers · 阻塞点
-- None
+- 决定采用或放弃某个方法
+- 一个实验完成并得到结论
+- 某个 bug 的根因被确认
+- baseline、数据集或评估方式发生变化
+- 人类做出了方向性决策
 
-## Next Actions · 下一步
-1. Read .workflow/research/plan.md for full plan
-2. Check .workflow/research/risk-register.md for risks
-3. Review .workflow/discussions/timeline.md for recent discussions
-4. Examine .workflow/references/README.md for reference code
+### 4. 记录灵感
 
-## Quick Links · 快速链接
-- Research Plan: .workflow/research/plan.md
-- Research Question Tree: .workflow/research/research-question-tree.md
-- Risk Register: .workflow/research/risk-register.md
-- Milestones: .workflow/research/milestones.md
-- Experiments: .workflow/research/experiments/
-- Ablation Matrix: .workflow/research/ablation/matrix.md
-- Recent Discussions: .workflow/discussions/timeline.md
-- Knowledge Base: .workflow/knowledge/
-- Presentations: .workflow/presentations/
-```
+运行 `dl-workflow inspire "想法"` 记录研究灵感。
 
-#### 2. Event Sourcing · 事件溯源
+适合记录还没有进入计划但值得保留的想法，例如新实验、新论文启发、新特征或新消融方向。
 
-All agent decisions and actions are recorded as immutable events in `.workflow/events/`:
+### 5. 切换会话前更新状态
 
-所有 agent 决策和操作都作为不可变事件记录在 `.workflow/events/` 中：
+在切换 IDE / AI / 会话前，至少更新：
 
-```json
-{
-  "id": "evt_001",
-  "timestamp": "2026-04-10T07:30:00Z",
-  "agent": "research-planner",
-  "action": "create-experiment",
-  "context": {
-    "experiment_id": "exp_001",
-    "phase": "exploration"
-  },
-  "input": {
-    "hypothesis": "Adding attention layer improves long-sequence modeling",
-    "variables": {
-      "num_heads": [4, 8, 16],
-      "dropout": [0.1, 0.2]
-    }
-  },
-  "output": {
-    "experiment_id": "exp_001"
-  },
-  "reasoning": "Based on Paper X findings, we believe...",
-  "alternatives_considered": ["RNN", "CNN"],
-  "confidence": 0.8,
-  "tags": ["experiment", "architecture"]
-}
-```
+- `AGENT.md` 的当前焦点
+- `AGENT.md` 的阻塞点
+- `AGENT.md` 的下一步行动
+- 必要的实验记录或事件记录
+
+不要只把重要判断留在聊天记录里。
+
+---
+
+## AI Handoff Guide · AI 接手协议
+
+任何 AI 打开一个已初始化的项目时，建议按这个顺序阅读：
+
+1. 先读 `AGENT.md`
+2. 再读 `.workflow/research/plan.md`
+3. 再看 `.workflow/research/experiments/active/`
+4. 再看 `.workflow/events/`
+5. 需要讨论脉络时，再看 `.workflow/discussions/timeline.md`
+6. 需要背景资料时，再看 `.workflow/references/` 和 `.workflow/knowledge/`
+
+AI 接手后应该能回答：
+
+- 项目目标是什么？
+- 当前阶段是什么？
+- 当前活跃实验是什么？
+- 最近关键决策是什么？
+- 当前阻塞点是什么？
+- 下一步应该做什么？
+- 有哪些文件、数据或方向不能随意改动？
+
+如果回答不了，优先补充 `AGENT.md` 和 `plan.md`，而不是继续增加目录或模板。
 
 ---
 
 ## Command Reference · 命令参考
 
-```bash
-dl-workflow init                   # Initialize new project · 初始化新项目
-dl-workflow status                 # Show current status · 查看当前状态
-dl-workflow event <description>    # Record event · 记录新事件
-dl-workflow inspire <description>  # Record inspiration · 记录新灵感
-dl-workflow parse-pdf <pdf-file>   # Parse PDF paper · 解析 PDF 论文
-dl-workflow parse-pdf --all        # Parse all PDFs · 解析所有 PDF
-dl-workflow summarize <type>       # Generate summary · 生成总结 (daily/weekly)
-dl-workflow help                   # Show help · 显示帮助
-```
+### Core Commands · 核心命令
 
-### Examples · 示例
+| 命令 | 说明 |
+| --- | --- |
+| `dl-workflow init` | 初始化新研究项目 |
+| `dl-workflow init --integrate` | 非破坏性集成到已有项目 |
+| `dl-workflow status` | 查看当前工作流状态 |
+| `dl-workflow event "描述"` | 记录关键事件、决策、实验结论或阻塞点 |
+| `dl-workflow inspire "想法"` | 记录研究灵感 |
+| `dl-workflow help` | 显示帮助 |
 
-```bash
-# Initialize · 初始化
-dl-workflow init
+### Advanced Commands · 高级命令
 
-# Record a decision · 记录决策
-dl-workflow event "Decided to use Transformer over RNN"
+| 命令 | 说明 |
+| --- | --- |
+| `dl-workflow parse-pdf <pdf-file> [paper-id]` | 为单个 PDF 创建论文解析工作区 |
+| `dl-workflow parse-pdf --all` | 为 `papers/pdf/` 下的 PDF 批量创建解析工作区 |
+| `dl-workflow summarize weekly` | 输出周总结提示和保存约定 |
 
-# Record an inspiration · 记录灵感
-dl-workflow inspire "Try layer-wise learning rate decay"
+说明：
 
-# Parse a PDF · 解析 PDF
-dl-workflow parse-pdf .workflow/references/papers/pdf/attention.pdf
-
-# Generate weekly summary · 生成周总结
-dl-workflow summarize weekly
-```
+- `dl-workflow` CLI 当前依赖 `jq`；所有命令启动时都会先检查它是否可用。
+- `dl-workflow` 启动器默认安装在 `~/.local/bin/dl-workflow`；如果该目录不在 `PATH` 中，也可以直接用完整路径调用。
+- `init` 是标准初始化模式；会生成 `AGENT.md`、`AGENTS.md`、`CLAUDE.md` 和 `.workflow/` 结构，已有文件会逐个询问是否覆盖。
+- `init --integrate` 是非破坏性集成模式；只补缺失文件，不覆盖已有文件。
+- `parse-pdf` 当前会补齐 `.workflow/config/pdf-parser.json`，并创建解析工作目录与 `paper.md` 占位文件；不会自动调用 MinerU API。
+- `summarize` 当前只输出建议读取范围与保存位置；不会自动生成总结文件。
 
 ---
 
-## Workflows · 工作流
+## Advanced Features · 高级能力
 
-### Daily Research · 日常研究
+这些能力可以在项目变复杂后逐步使用，不是核心协议的第一层。
 
-1. **Open project & read AGENT.md** · 打开项目并阅读 AGENT.md
-2. **Record decisions as events** · 将决策记录为事件
-3. **Capture inspirations immediately** · 立即记录灵感
-4. **Update research progress** · 更新研究进展
-5. **Generate summaries periodically** · 定期生成总结
+### Full `.workflow/` Structure · 完整目录结构
 
-### Switching IDEs/AI Tools · 切换 IDE/AI 工具
+标准初始化可能包含这些目录：
 
-New AI just needs to:
+| 路径 | 定位 |
+| --- | --- |
+| `.workflow/discussions/` | 讨论时间线和按主题归档 |
+| `.workflow/knowledge/` | 项目知识沉淀 |
+| `.workflow/references/` | 论文、repo、灵感和代码片段 |
+| `.workflow/snapshots/` | 阶段状态快照 |
+| `.workflow/presentations/` | 周报、阶段总结和汇报材料 |
+| `.workflow/artifacts/` | 产物清单 |
+| `.workflow/config/` | 工具配置 |
+| `.workflow/templates/` | 记录模板 |
 
-新的 AI 只需要：
+### Template Suite · 模板系统
 
-1. **Read AGENT.md** · 阅读 AGENT.md
-2. **Follow links to details** · 根据链接跳转到详情
-3. **Fully understand state** · 完全理解当前状态
+当前提供 25 个模板，覆盖计划、实验、发现、总结、参考资料与跨 IDE 兼容入口等内容。
 
-No import/export needed - everything is in files.
+新用户优先关注核心模板：
 
-无需导入/导出 - 一切都在文件中。
+- `AGENT.md.template`
+- `plan.md.template`
+- `experiment.md.template`
+- `event.json.template`
+- `decision-review.md.template`
+- `inspiration.md.template`
+- `weekly-summary.md.template`
 
-### PDF Parsing Workflow · PDF 解析工作流
+其他模板属于 advanced，用于论文阅读、消融实验、风险登记、里程碑、阶段总结、可视化、参考资料和知识库维护。
 
-1. **Place PDF in** `.workflow/references/papers/pdf/` · 将 PDF 放入该目录
-2. **Run parser** · 运行解析器：
-   ```bash
-   dl-workflow parse-pdf .workflow/references/papers/pdf/2026-attention.pdf
-   ```
-3. **Configure MinerU API** (edit `.workflow/config/pdf-parser.json`) · 配置 MinerU API
-4. **Parsed results in** `.workflow/references/papers/parsed/{id}/` · 解析结果在此目录
-5. **AI reads parsed Markdown directly** · AI 直接读取解析后的 Markdown
-6. **Create paper-note.md from parsed results** · 基于解析结果创建论文笔记
+### PDF Workspace Scaffold · PDF 工作区脚手架
 
----
+`parse-pdf` 只负责创建论文解析工作区、配置占位和 `paper.md` 占位文件。它不会自动解析 PDF，也不会自动调用 MinerU API。
 
-## Templates · 模板
+如果你需要真实 PDF 解析，可以把 MinerU 或其他解析器的输出粘贴或接入到生成的工作区中。
 
-Full template suite (24 templates):
+### Summary Prompt Helper · 总结提示助手
 
-完整模板套件（24 个模板）：
+`summarize weekly` 只输出周总结提示和推荐保存位置。它不会自动读取所有文件并生成总结。
 
-| Template | Purpose | Priority |
-|----------|---------|----------|
-| `AGENT.md.template` | AI Entry Document | P0 |
-| `plan.md.template` | Research Plan | P0 |
-| `research-question-tree.md.template` | Research Question Tree | P1 |
-| `risk-register.md.template` | Risk Register | P1 |
-| `experiment.md.template` | Experiment Log | **P0** |
-| `ablation-matrix.md.template` | Ablation Matrix | **P0** |
-| `finding.md.template` | Finding Record | **P0** |
-| `decision-review.md.template` | Decision Review | P1 |
-| `paper-note.md.template` | Paper Note (with BibTeX) | P1 |
-| `inspiration.md.template` | Inspiration Record | P1 |
-| `weekly-summary.md.template` | Weekly Summary | P1 |
-| `phase-summary.md.template` | Phase Summary | P1 |
-| `event.json.template` | Event Format | P0 |
-| `milestones.md.template` | Milestones | P1 |
-| `gitignore.template` | .gitignore | P0 |
-| `pdf-parser-config.json.template` | PDF Parser Config | P1 |
-| `visualization-guide.md.template` | Visualization Guide | P1 |
+你可以让 AI 根据提示读取 `.workflow/events/`、`.workflow/discussions/timeline.md` 和 `.workflow/research/experiments/` 后，再手动或半自动生成周总结。
 
 ---
 
-## Troubleshooting · 故障排除
+## Boundaries · 能力边界
 
-### "command not found: jq"
+`dl-research-workflow` 不做这些事情：
 
-Install jq:
-```bash
-brew install jq  # macOS
-apt install jq   # Ubuntu/Debian
-```
+| 不做什么 | 原因 |
+| --- | --- |
+| 多 agent 编排 | 它是共享状态协议，不是调度系统 |
+| 自动任务调度 | 容易变成复杂平台 |
+| 权限管理或审批流 | 超出轻量 skill 范围 |
+| GPU / 训练任务管理 | 应交给训练脚本、调度系统或平台 |
+| 指标追踪和可视化 | WandB、MLflow、TensorBoard 更适合 |
+| 数据版本管理 | DVC 等工具更适合 |
+| 模型 registry | 不是本 skill 的目标 |
+| 真实 PDF 解析 | 依赖外部工具和复杂错误处理 |
+| 自动生成完整周报 | 当前只提供提示和保存约定 |
+| 替代 Notion / Jira / Linear | 它只维护研究上下文 |
 
-### JSON Parsing Errors
+它只专注一件事：
 
-Ensure special characters in event descriptions are properly escaped. Use `dl-workflow event` command which handles this automatically.
+> 维护 AI 可接手的研究上下文。
 
-确保事件描述中的特殊字符被正确转义。使用 `dl-workflow event` 命令会自动处理。
+---
 
-### "command not found: dl-workflow"
+## Documentation · 文档入口
 
-Ensure the skill is installed correctly:
-```bash
-ls ~/.claude/skills/dl-research-workflow/
-```
-
-If not installed, run:
-```bash
-npx create-dl-research-workflow
-```
+- [Skill Definition · Skill 定义](skills/dl-research-workflow/SKILL.md)
+- [AGENT.md 说明](skills/dl-research-workflow/references/agent-md.md)
+- [研究结构说明](skills/dl-research-workflow/references/research-structure.md)
+- [命令说明](skills/dl-research-workflow/references/cli-commands.md)
+- [模板说明](skills/dl-research-workflow/references/templates.md)
+- [最佳实践](skills/dl-research-workflow/references/best-practices.md)
 
 ---
 
 ## Best Practices · 最佳实践
 
-1. **Keep AGENT.md updated** - Before switching tools
-2. **Record ALL decisions as events** - Don't just keep them in your head
-3. **Complete experiment records** - Hypothesis, variables, seed, hardware, commit hash
-4. **Summarize reference code** - Don't just clone without digesting
-5. **Generate presentations periodically** - Force yourself to organize thoughts
-6. **Use the templates** - Don't start from scratch
-7. **Review decisions regularly** - Learn from mistakes
-8. **Manage risks** - Continuously update risk register
-
-1. **保持 AGENT.md 最新** - 切换工具前
-2. **记录所有决策为事件** - 不要只记在脑子里
-3. **完整的实验记录** - 假设、变量、seed、硬件、commit hash
-4. **总结参考代码** - 不要只 clone 不消化
-5. **定期生成展示** - 强迫自己整理思路
-6. **使用模板** - 不要从零开始
-7. **定期回顾决策** - 从错误中学习
-8. **管理风险** - 持续更新风险登记册
-
----
-
-## Detailed Documentation · 详细文档
-
-- [Skill Definition · Skill 定义](skills/dl-research-workflow/skill.md)
-- [Usage Guide · 使用指南](skills/dl-research-workflow/USAGE.md)
-- [Changelog · 变更日志](skills/dl-research-workflow/CHANGELOG.md)
+- 把 `AGENT.md` 当作 AI 接手卡片，而不是普通说明文件
+- 切换工具或会话前，先更新 `AGENT.md`
+- 重要决策用 `dl-workflow event` 记录
+- 每个实验都要写清楚目标、设置、结果、结论和下一步
+- 参考论文与 repo 要写摘要，不要只收藏链接
+- 定期生成周总结或阶段总结，把事件和实验结论压缩成更容易接手的状态
 
 ---
 
 ## License · 许可证
 
 MIT
-
----
-
-## Contributing · 贡献
-
-Contributions welcome! Feel free to open issues or PRs.
-
-欢迎贡献！欢迎提交 issue 或 PR。
-
----
-
-<p align="center">
-  <strong>Happy researching! · 研究愉快！</strong>
-</p>
