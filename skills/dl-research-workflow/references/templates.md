@@ -2,15 +2,15 @@
 
 ## 模板列表
 
-共 24 个模板，分为 P0（核心）和 P1（重要）。
+当前模板覆盖常见研究记录场景，分为 P0（核心）、P1（重要）和辅助模板。
 
 ### P0 - 核心模板
 
 | 模板 | 用途 | 关键字段 |
 |------|------|----------|
-| `AGENT.md.template` | AI 入口文档 | 阶段、目标、阻塞点、下一步 |
-| `plan.md.template` | 研究计划 | RQ、目标、路线图 |
-| `experiment.md.template` | 实验记录 | Hypothesis、Variables、Metrics、Configuration |
+| `AGENT.md.template` | 项目接手协议 | 当前焦点、优先级、下一步、读取顺序 |
+| `plan.md.template` | 中期研究计划 | 核心问题、当前判断、阶段出口、决策原则 |
+| `experiment.md.template` | 单实验决策单 | 实验问题、成功标准、复现配置、结果、结论 |
 | `ablation-matrix.md.template` | 消融矩阵 | 变量组合、结果对比 |
 | `finding.md.template` | 发现记录 | Observation → Hypothesis → Validation → Conclusion |
 | `event.json.template` | 事件格式 | timestamp、action、input、output、reasoning |
@@ -39,8 +39,23 @@
 | `inspirations-index.md.template` | 灵感索引 |
 | `knowledge-readme.md.template` | 知识库索引 |
 | `events-index.json.template` | 事件索引 |
-| `pdf-parser-config.json.template` | PDF 解析配置 |
+| `pdf-parser-config.json.template` | 外部 PDF 解析器配置占位；`dl-workflow parse-pdf` 当前不会自动解析 PDF 或调用 MinerU |
 | `project-readme.md.template` | 项目 README |
+| `AGENTS.md.template` | `AGENTS.md` 兼容入口 |
+| `CLAUDE.md.template` | `CLAUDE.md` 兼容入口 |
+
+## 推荐分工
+
+建议把模板理解成三个层次：
+
+1. **入口层**：`AGENT.md.template`
+   - 负责让新的 AI 在最短时间内接手当前状态
+
+2. **计划层**：`plan.md.template`、`research-question-tree.md.template`、`milestones.md.template`、`risk-register.md.template`
+   - 负责表达研究主线、阶段判断和中期方向
+
+3. **执行层**：`experiment.md.template`、`finding.md.template`、`decision-review.md.template`
+   - 负责记录实验、发现和关键决策
 
 ## 使用方式
 

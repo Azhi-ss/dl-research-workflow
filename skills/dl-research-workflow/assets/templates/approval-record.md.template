@@ -1,0 +1,67 @@
+---
+approval_id: {{approval_id}}
+status: proposed | approved | rejected | superseded
+requested_at: {{timestamp}}
+requested_by: {{requester}}
+approved_by: 
+effective_at: 
+scope: 
+related_plan: 
+related_event: 
+---
+
+# 审批记录 · {{approval_id}}
+
+> 本文档用于把 AI 建议、人工判断和最终生效范围分开记录。
+> 适用于高风险改动、方向性决策、对外发布或需要人类拍板的事项。
+
+---
+
+## 待审批事项
+
+- **决策项**：
+- **为什么现在要决定**：
+- **不决策的代价**：
+
+---
+
+## AI 建议
+
+- **建议内容**：
+- **主要依据**：
+- **备选方案**：
+- **置信度**：low / medium / high
+
+---
+
+## 人类决定
+
+- **结论**：批准 / 驳回 / 延后 / 需要补充信息
+- **决定理由**：
+- **附加条件**：
+- **审批人备注**：
+
+---
+
+## 生效范围
+
+- **涉及文件 / 模块**：
+- **涉及实验 / 计划项**：
+- **是否需要回滚预案**：yes / no
+- **是否需要二次复核**：yes / no
+
+---
+
+## 风险说明
+
+- **主要风险**：
+- **监控信号**：
+- **触发回滚条件**：
+
+---
+
+## 后续动作
+
+- [ ] 更新 `AGENT.md` / `plan.md`
+- [ ] 记录对应事件或决策回顾
+- [ ] 通知相关 owner / reviewer / approver

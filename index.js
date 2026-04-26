@@ -80,12 +80,66 @@ function getClaudeSkillsDir() {
   return path.join(home, '.claude', 'skills');
 }
 
+function getUserBinDir() {
+  const home = os.homedir();
+  if (process.platform === 'win32') {
+    return path.join(home, '.claude', 'bin');
+  }
+  return path.join(home, '.local', 'bin');
+}
+
+function getCliLauncherPath() {
+  const launcherName = process.platform === 'win32' ? 'dl-workflow.cmd' : 'dl-workflow';
+  return path.join(getUserBinDir(), launcherName);
+}
+
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
     return true;
   }
   return false;
+}
+
+function escapeForDoubleQuotes(value) {
+  return value.replace(/(["$`\\])/g, '\\$1');
+}
+
+function formatCliInvocation(cliPathOrName, args = '') {
+  const command = cliPathOrName.includes(path.sep)
+    ? `"${escapeForDoubleQuotes(cliPathOrName)}"`
+    : cliPathOrName;
+
+  return args ? `${command} ${args}` : command;
+}
+
+function isDirOnPath(dir) {
+  const currentPath = process.env.PATH || '';
+  const normalizedDir = path.resolve(dir);
+
+  return currentPath
+    .split(path.delimiter)
+    .filter(Boolean)
+    .some((entry) => path.resolve(entry) === normalizedDir);
+}
+
+function createCliLauncher(targetDir) {
+  const installedCliPath = path.join(targetDir, 'scripts', 'dl-workflow');
+  const launcherPath = getCliLauncherPath();
+
+  ensureDir(path.dirname(launcherPath));
+
+  if (process.platform === 'win32') {
+    const escapedCliPath = installedCliPath.replace(/"/g, '""');
+    const content = `@echo off\r\n"bash" "${escapedCliPath}" %*\r\n`;
+    fs.writeFileSync(launcherPath, content, 'utf8');
+  } else {
+    const content = `#!/bin/sh\nexec "${escapeForDoubleQuotes(installedCliPath)}" "$@"\n`;
+    fs.writeFileSync(launcherPath, content, 'utf8');
+    fs.chmodSync(launcherPath, 0o755);
+  }
+
+  return launcherPath;
 }
 
 function copyRecursive(src, dest) {
@@ -189,6 +243,39 @@ async function main() {
     printSuccess('(Dry run) Skill files would be copied');
   }
 
+  const launcherPath = getCliLauncherPath();
+  const fallbackCliPath = path.join(targetDir, 'scripts', 'dl-workflow');
+  let preferredCliPath = fallbackCliPath;
+  let shortCommandAvailable = false;
+
+  if (!isDryRun) {
+    try {
+      createCliLauncher(targetDir);
+      preferredCliPath = launcherPath;
+      shortCommandAvailable = isDirOnPath(path.dirname(launcherPath));
+      printSuccess(`CLI launcher installed: ${launcherPath}`);
+
+      if (!shortCommandAvailable) {
+        printWarning(`${path.dirname(launcherPath)} is not in PATH yet`);
+        printInfo(`Use ${formatCliInvocation(launcherPath)} directly, or add it to your PATH`);
+      }
+    } catch (error) {
+      printWarning(`Failed to create CLI launcher: ${error.message}`);
+      printInfo(`You can still run the bundled CLI via ${formatCliInvocation(fallbackCliPath)}`);
+    }
+  } else {
+    shortCommandAvailable = isDirOnPath(path.dirname(launcherPath));
+    preferredCliPath = shortCommandAvailable ? 'dl-workflow' : launcherPath;
+    printSuccess(`(Dry run) CLI launcher would be created at: ${launcherPath}`);
+  }
+
+  const initCommand = shortCommandAvailable
+    ? 'dl-workflow init'
+    : formatCliInvocation(preferredCliPath, 'init');
+  const helpCommand = shortCommandAvailable
+    ? 'dl-workflow help'
+    : formatCliInvocation(preferredCliPath, 'help');
+
   console.log('');
   console.log(`${colors.bright}${colors.green}╔════════════════════════════════════════════════════════════╗${colors.reset}`);
   console.log(`${colors.bright}${colors.green}║${colors.reset}  ${colors.bright}Installation complete!${colors.reset}                                     ${colors.green}║${colors.reset}`);
@@ -202,21 +289,21 @@ async function main() {
   console.log('');
   console.log(`  ${colors.dim}# Create a new research project${colors.reset}`);
   console.log(`  ${colors.cyan}mkdir my-research-project && cd my-research-project${colors.reset}`);
-  console.log(`  ${colors.cyan}dl-workflow init${colors.reset}`);
+  console.log(`  ${colors.cyan}${initCommand}${colors.reset}`);
   console.log('');
   console.log(`  ${colors.dim}# Or use the commands directly:${colors.reset}`);
-  console.log(`  ${colors.cyan}dl-workflow help${colors.reset}`);
+  console.log(`  ${colors.cyan}${helpCommand}${colors.reset}`);
   console.log('');
 
   console.log(`${colors.dim}────────────────────────────────────────────────────────────────${colors.reset}`);
   console.log('');
   console.log(`${colors.bright}Next steps:${colors.reset}`);
   console.log('');
-  console.log(`  1. ${colors.cyan}Read the documentation:${colors.reset}`);
-  console.log(`     ${colors.dim}${targetDir}/USAGE.md${colors.reset}`);
+  console.log(`  1. ${colors.cyan}Read the skill guide:${colors.reset}`);
+  console.log(`     ${colors.dim}${targetDir}/SKILL.md${colors.reset}`);
   console.log('');
   console.log(`  2. ${colors.cyan}Initialize a research project:${colors.reset}`);
-  console.log(`     ${colors.dim}cd your-project/ && dl-workflow init${colors.reset}`);
+  console.log(`     ${colors.dim}cd your-project/ && ${initCommand}${colors.reset}`);
   console.log('');
   console.log(`  3. ${colors.cyan}Start researching!${colors.reset}`);
   console.log('');

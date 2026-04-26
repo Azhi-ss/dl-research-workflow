@@ -61,19 +61,8 @@ else
     echo ""
     echo "📋 模式: 完整初始化"
     echo "   - 创建完整的项目结构"
-    echo "   - 如果文件已存在会提示覆盖"
+    echo "   - 已有文件会逐个确认是否覆盖"
     echo ""
-
-    # 检查是否已经初始化（仅在非集成模式下）
-    if [ -f "AGENT.md" ]; then
-        echo "⚠️  检测到 AGENT.md 已存在"
-        read -p "是否覆盖? (y/N) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "已取消"
-            exit 1
-        fi
-    fi
 fi
 
 # 获取当前时间
@@ -96,6 +85,33 @@ echo "📄 生成初始文件..."
 
 TEMPLATES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../assets/templates"
 
+# 判断是否写入目标文件
+should_write_file() {
+    local output="$1"
+
+    if [ ! -f "$output" ]; then
+        return 0
+    fi
+
+    if [ "$INTEGRATE_MODE" -eq 1 ]; then
+        if [ "$VERBOSE" -eq 1 ]; then
+            echo "   ℹ️  $output 已存在，跳过"
+        fi
+        return 1
+    fi
+
+    echo "⚠️  检测到已有文件: $output"
+    read -p "是否覆盖? (y/N) " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        return 0
+    fi
+
+    echo "   ↩️  跳过: $output"
+    return 1
+}
+
 # 从模板生成文件
 apply_template() {
     local template="$1"
@@ -106,28 +122,30 @@ apply_template() {
         return 1
     fi
 
-    # 在集成模式下，如果文件已存在，跳过
-    if [ "$INTEGRATE_MODE" -eq 1 ] && [ -f "$output" ]; then
-        if [ "$VERBOSE" -eq 1 ]; then
-            echo "   ℹ️  $output 已存在，跳过"
-        fi
+    if ! should_write_file "$output"; then
         return 0
     fi
 
     sed "s/{{timestamp}}/$TIMESTAMP/g; s/{{date}}/$DATE/g; s/{{agent_name}}/dl-workflow-init/g" "$TEMPLATES_DIR/$template" > "$output"
 
     if [ "$VERBOSE" -eq 1 ]; then
-        if [ "$INTEGRATE_MODE" -eq 1 ]; then
-            echo "   ➕ 创建: $output"
-        else
-            echo "   📄 生成: $output"
-        fi
+        echo "   📄 生成: $output"
     fi
 }
 
-# 检查文件是否存在
-file_exists() {
-    [ -f "$1" ]
+copy_project_template() {
+    local source="$1"
+    local output="$2"
+
+    if ! should_write_file "$output"; then
+        return 0
+    fi
+
+    cp "$source" "$output"
+
+    if [ "$VERBOSE" -eq 1 ]; then
+        echo "   📄 复制: $output"
+    fi
 }
 
 # 生成合并报告
@@ -142,12 +160,14 @@ generate_merge_report() {
     echo "📋 下一步建议："
     echo "   1. 编辑 AGENT.md 填写你的项目信息"
     echo "   2. 查看 .workflow/research/plan.md 开始规划"
-    echo "   3. 在 Claude Code 中说：'帮我看看 AGENT.md' 开始对话式使用"
+    echo "   3. 在任何支持 agent markdown 的 IDE 中，让 AI 先读 AGENTS.md / CLAUDE.md / AGENT.md"
     echo ""
 }
 
 # 生成 AGENT.md
 apply_template "AGENT.md.template" "AGENT.md"
+apply_template "AGENTS.md.template" "AGENTS.md"
+apply_template "CLAUDE.md.template" "CLAUDE.md"
 
 # 生成研究计划
 apply_template "plan.md.template" ".workflow/research/plan.md"
@@ -208,7 +228,11 @@ apply_template "gitignore.template" ".gitignore"
 apply_template "project-readme.md.template" "README.md"
 
 # 复制所有模板到 .workflow/templates/ 供项目内使用
-cp "$TEMPLATES_DIR"/*.template .workflow/templates/ 2>/dev/null || true
+for template_file in "$TEMPLATES_DIR"/*.template; do
+    [ -f "$template_file" ] || continue
+    template_name="$(basename "$template_file")"
+    copy_project_template "$template_file" ".workflow/templates/$template_name"
+done
 
 echo "✅ 初始文件生成完成"
 

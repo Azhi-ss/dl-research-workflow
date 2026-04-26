@@ -1,7 +1,37 @@
-# 项目状态概览
+# AGENT.md · 项目接手协议
 
-> 任何 AI 打开项目，请**首先阅读此文件**。
-> 这是理解项目当前状态的入口。
+> 任何 AI 打开项目时，请**先读完这个文件**，再决定下一步。
+> 目标：在 **2-3 分钟内** 读懂当前计划、当前焦点、下一步行动。
+
+---
+
+## 如果你是 AI，请按这个顺序执行
+
+1. **先完整阅读本文件**，不要一上来全仓扫描。
+2. 根据“建议读取顺序”补充必要上下文。
+3. 优先执行“下一步行动”里的第 1 项。
+4. 如果信息不足，再扩大阅读范围；不要默认自己从零推断项目状态。
+
+---
+
+## 当前焦点
+
+- **一句话目标**：
+- **当前成功标准**：
+- **本轮最重要的问题**：
+
+---
+
+## 协作信息
+
+- **owner**：
+- **reviewer**：
+- **approver**：
+- **blocked_by**：
+- **depends_on**：
+- **last_updated_by**：{{agent_name}}
+- **last_verified_at**：{{timestamp}}
+- **human_approval_required**：yes / no
 
 ---
 
@@ -14,25 +44,51 @@
 
 ---
 
-## 本周目标
+## 当前优先级（最多 3 项）
 
-- [ ] 目标 1
-- [ ] 目标 2
-- [ ] 目标 3
+- [ ] P0:
+- [ ] P1:
+- [ ] P2:
+
+---
+
+## 当前活跃项
+
+- **活跃实验**：
+- **当前主文档**：
+- **当前主代码路径**：
+- **最近关键决策**：
 
 ---
 
 ## 阻塞点
 
-暂无
+- 暂无
+- 若有阻塞，请写清：**问题 / 影响 / 下一步应对**
 
 ---
 
-## 下一步行动
+## 下一步行动（按顺序执行）
 
-1. 阅读 `.workflow/research/plan.md` 了解完整研究计划
-2. 查看 `.workflow/discussions/timeline.md` 了解最近讨论
-3. 检查 `.workflow/references/README.md` 有哪些参考资料
+1. 
+2. 
+3. 
+
+> 要求：每一项都尽量写成**可执行动作 + 预期产出**，例如：
+> `更新 .workflow/research/plan.md 中的阶段目标，并补充本周实验清单。`
+
+---
+
+## 建议读取顺序
+
+如果你需要更多上下文，请按以下顺序继续阅读：
+
+1. `.workflow/research/plan.md`
+2. `.workflow/research/experiments/active/`
+3. `.workflow/research/risk-register.md`
+4. `.workflow/discussions/timeline.md`
+5. `.workflow/events/index.json`
+6. `.workflow/references/README.md`
 
 ---
 
@@ -41,37 +97,25 @@
 | 内容 | 位置 |
 |------|------|
 | 研究计划 | `.workflow/research/plan.md` |
+| 研究问题树 | `.workflow/research/research-question-tree.md` |
+| 风险登记册 | `.workflow/research/risk-register.md` |
 | 里程碑 | `.workflow/research/milestones.md` |
 | 活跃实验 | `.workflow/research/experiments/active/` |
 | 消融矩阵 | `.workflow/research/ablation/matrix.md` |
 | 讨论时间线 | `.workflow/discussions/timeline.md` |
+| 事件索引 | `.workflow/events/index.json` |
 | 知识积累 | `.workflow/knowledge/` |
-| 参考代码 | `.workflow/references/README.md` |
-| 灵感记录 | `.workflow/references/inspirations/` |
+| 参考资料 | `.workflow/references/README.md` |
 | 展示总结 | `.workflow/presentations/` |
 
 ---
 
-## 项目结构说明
+## 维护规则
 
-```
-your-project/
-├── AGENT.md                    # ← 你正在读这个文件
-├── README.md                   # 人类可读的项目介绍
-├── .workflow/                  # Agent Workflow 数据（AI 记忆）
-│   ├── events/                 # 不可变事件流（所有决策记录）
-│   ├── research/               # 研究计划与进展
-│   ├── discussions/            # 讨论区
-│   ├── knowledge/              # 积累的知识
-│   ├── references/             # 参考代码与灵感
-│   └── presentations/          # 展示区（总结 + 图表）
-├── configs/                    # 配置文件
-├── src/                        # 源代码
-│   ├── models/                 # 模型定义
-│   ├── training/               # 训练逻辑
-│   └── utils/                  # 工具函数
-└── notebooks/                  # Jupyter notebooks
-```
+- **保持短**：优先控制在 1 屏到 2 屏内，不要写成长篇背景文档
+- **保持新**：每次重要决策、阶段变化、优先级变化后更新
+- **保持指向性**：这里只写“现在最重要的状态”，细节放到 `.workflow/` 里的专题文件
+- **保持可执行**：`下一步行动` 必须能让新的 AI 直接开始工作
 
 ---
 

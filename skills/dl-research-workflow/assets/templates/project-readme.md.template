@@ -1,30 +1,108 @@
-# DL Research Project
+# Research Project
 
-> 这是一个深度学习研究项目。
-
----
-
-## 对于 AI 助手
-
-**请首先阅读 AGENT.md 来理解项目当前状态。
+> 这是一个基于 `dl-research-workflow` 初始化的研究项目。
+> 目标不是只存放代码，而是把**研究状态、实验历史和关键决策**都沉淀到文件里。
 
 ---
 
-## 对于人类
+## 如果你是 AI 助手
 
-标准的深度学习研究项目结构。
+请先按这个顺序阅读：
+
+1. `AGENT.md`
+2. `.workflow/research/plan.md`
+3. `.workflow/research/experiments/active/`
+4. `.workflow/discussions/timeline.md`
+
+不要一上来全仓扫描；先理解当前状态，再扩展阅读范围。
 
 ---
 
-## 快速开始
+## 如果你是项目成员
+
+建议从这 5 个入口开始：
+
+- `AGENT.md`：当前状态、优先级、下一步
+- `AGENTS.md` / `CLAUDE.md`：给其他 IDE / AI 工具的兼容入口
+- `.workflow/research/plan.md`：中期研究计划
+- `.workflow/research/milestones.md`：阶段目标与出口条件
+- `.workflow/research/experiments/active/`：正在进行的实验
+
+---
+
+## 初始化后建议先做的事
+
+- [ ] 更新 `AGENT.md` 中的当前焦点、优先级和下一步行动
+- [ ] 在 `.workflow/research/plan.md` 写清研究问题与成功标准
+- [ ] 在 `.workflow/research/research-question-tree.md` 拆分子问题
+- [ ] 在 `.workflow/research/risk-register.md` 写下当前最大风险
+- [ ] 为第一个实验创建记录
+- [ ] 如涉及正式数据管理，补一份 dataset card / data governance 文档
+- [ ] 如进入 benchmark 阶段，补一份 evaluation plan
+- [ ] 如准备发布或部署，补一份 model card 或 deployment readiness 文档
+
+---
+
+## 可选扩展文档
+
+如需把项目扩展到更完整的数据治理、评估或交接流程，建议从 `.workflow/templates/` 复制并实例化以下模板：
+
+- `dataset-card.md.template`：记录数据来源、版本、许可、敏感级别与切分规则
+- `evaluation-plan.md.template`：冻结 benchmark、metrics、多 seed 与显著性检验协议
+- `handoff.md.template`：做跨会话 / 跨 Agent 的交接包
+- `approval-record.md.template`：把 AI 建议与人类批准分开记录
+- `model-card.md.template`：沉淀使用边界、风险、评估摘要与部署注意事项
+
+---
+
+## 常用命令
+
+### 核心命令
 
 ```bash
-# 查看状态
 dl-workflow status
-
-# 记录事件
-dl-workflow event "描述"
-
-# 记录灵感
-dl-workflow inspire "想法"
+dl-workflow event "记录一个关键决策"
+dl-workflow inspire "记录一个新想法"
 ```
+
+### 高级辅助命令
+
+```bash
+dl-workflow summarize weekly
+```
+
+`summarize weekly` 只输出周总结提示和推荐保存位置，不会自动生成总结文件。
+
+---
+
+## 项目结构
+
+```text
+.
+├── AGENT.md
+├── .workflow/
+│   ├── events/
+│   ├── research/
+│   ├── discussions/
+│   ├── knowledge/
+│   ├── references/
+│   └── presentations/
+├── configs/
+├── data/
+├── notebooks/
+├── scripts/
+├── src/
+├── tests/
+├── checkpoints/
+├── logs/
+└── outputs/
+```
+
+---
+
+## 约定
+
+- `AGENT.md` 只写当前状态，不写全部细节
+- `plan.md` 负责中期主线，不记录单次实验日志
+- 每个实验都应该有独立记录，便于复现和复盘
+- 关键决策尽量写入 `.workflow/events/`

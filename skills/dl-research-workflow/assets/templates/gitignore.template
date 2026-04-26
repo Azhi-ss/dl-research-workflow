@@ -66,6 +66,6 @@ credentials.json
 .workflow/references/papers/pdf/*.pdf
 .workflow/references/papers/pdf/*.PDF
 
-# Workflow 临时文件
+# 运行态临时文件
 .workflow/snapshots/*.bak
 .workflow/*.tmp

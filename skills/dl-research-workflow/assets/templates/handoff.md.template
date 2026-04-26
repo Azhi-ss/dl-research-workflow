@@ -1,0 +1,84 @@
+---
+handoff_id: {{handoff_id}}
+created_at: {{timestamp}}
+from: {{from_agent}}
+to: {{to_agent}}
+status: pending | accepted | completed
+related_plan: 
+related_experiment: 
+priority: P0 | P1 | P2
+---
+
+# 交接单 · {{handoff_id}}
+
+> 本文档用于跨会话、跨 IDE 或跨 Agent 交接当前工作。
+> 目标是让下一位执行者读完后能直接开始，而不是重新整理上下文。
+
+---
+
+## 当前目标
+
+- **一句话目标**：
+- **为什么现在做这件事**：
+- **当前成功标准**：
+
+---
+
+## 当前状态快照
+
+- **owner**：
+- **reviewer**：
+- **blocked_by**：
+- **depends_on**：
+- **last_updated_by**：
+- **last_verified_at**：
+
+---
+
+## 已完成
+
+- 
+- 
+- 
+
+## 正在进行
+
+- 
+- 
+
+## 尚未开始但已决定要做
+
+- 
+- 
+
+---
+
+## 关键文件
+
+- `AGENT.md`
+- `.workflow/research/plan.md`
+- 
+- 
+
+---
+
+## 未决问题 / 风险
+
+- **问题 1**：
+- **问题 2**：
+
+---
+
+## 下一位执行者的第一动作
+
+1. 
+2. 
+3. 
+
+---
+
+## 验证与回写要求
+
+- [ ] 完成后更新 `AGENT.md`
+- [ ] 必要时更新 `plan.md` / 实验记录 / 事件文件
+- [ ] 如果结论发生变化，补一条事件或决策记录

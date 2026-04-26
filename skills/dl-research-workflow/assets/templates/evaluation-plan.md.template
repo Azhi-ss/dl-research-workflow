@@ -1,0 +1,84 @@
+---
+evaluation_id: {{evaluation_id}}
+owner: 
+reviewer: 
+status: draft | active | frozen | completed
+related_model: 
+related_dataset: 
+last_updated_at: {{timestamp}}
+---
+
+# 评估计划 · {{evaluation_id}}
+
+> 本文档用于冻结 benchmark、指标、基线、重复实验与显著性检验协议。
+> 目标是让“怎么评估才算公平”变成显式规则，而不是实验结束后再回忆。
+
+---
+
+## 评估目标
+
+- **要回答的问题**：
+- **为什么现在评估**：
+- **Go / No-Go 标准**：
+
+---
+
+## 评估对象与范围
+
+- **模型 / 实验版本**：
+- **数据版本**：
+- **评估 split / benchmark**：
+- **不在本次评估范围内的内容**：
+
+---
+
+## Metrics
+
+| Metric | Why it matters | Primary / Secondary | Target |
+|--------|----------------|---------------------|--------|
+|        |                |                     |        |
+
+---
+
+## 基线与对照
+
+- **baseline 1**：
+- **baseline 2**：
+- **公平比较约束**：
+
+---
+
+## 重复实验与统计要求
+
+- **repeated runs / seeds**：
+- **significance method**：
+- **置信区间 / 报告方式**：
+- **异常结果处理规则**：
+
+---
+
+## 错误分析与扩展评估
+
+- **failure cases / slice 分析**：
+- **鲁棒性 / 稳定性评估**：
+- **公平性 / 偏差检查（可选）**：
+- **成本 / 延迟 / 吞吐评估（可选）**：
+
+---
+
+## 交付物
+
+- **结果表格**：
+- **图表**：
+- **结论摘要**：
+- **需要更新的文件**：
+
+---
+
+## 审查清单
+
+- [ ] benchmark 已冻结
+- [ ] 数据版本已写清
+- [ ] metrics 与 target 已确定
+- [ ] 多 seed / 统计方法已确定
+- [ ] error analysis 范围已确定

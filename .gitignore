@@ -1,0 +1,55 @@
+# 仓库源码边界
+# - 根目录 `AGENT.md` / `AGENTS.md` / `CLAUDE.md` 是仓库内受版本控制的兼容入口
+# - `.workflow/` 与在仓库根部 dogfood 生成的研究产物属于本地运行态，不默认提交
+
+# dependencies
+node_modules/
+
+# npm pack artifacts
+*.tgz
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# local env
+.env
+.env.*
+
+# editor / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# local tooling data
+.omx/
+.codebuddy/
+.claude/
+.codex
+
+# temp / cache
+.tmp/
+tmp/
+.cache/
+coverage/
+
+# repo-local workflow state (dogfooding this skill in the repo)
+# 注意：这里只针对“本仓库根目录”。在用户项目里，`.workflow/` 通常是正式状态源，不应被这里的仓库忽略策略误解为默认不提交。
+.workflow/
+/checkpoints/
+/data/
+/logs/
+/outputs/
+*.pt
+*.pth
+*.bin
+*.h5
+*.npz
+*.pickle
+*.pkl

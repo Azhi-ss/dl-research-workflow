@@ -1,12 +1,18 @@
 {
-  "mineru": {
-    "api_endpoint": "https://api.mineru.com/v1",
-    "api_key": "YOUR_MINERU_API_KEY",
+  "note": "This is a placeholder for external PDF parser settings. dl-workflow parse-pdf does not call MinerU or parse PDFs automatically.",
+  "external_pdf_parser": {
+    "name": "MinerU or another parser",
+    "api_endpoint": "",
+    "api_key_env": "",
     "timeout": 300,
     "options": {
       "extract_images": true,
-      "image_quality": "high",
       "output_format": "markdown"
     }
+  },
+  "manual_workflow": {
+    "pdf_directory": ".workflow/references/papers/pdf/",
+    "parsed_directory": ".workflow/references/papers/parsed/",
+    "placeholder_file": "paper.md"
   }
 }

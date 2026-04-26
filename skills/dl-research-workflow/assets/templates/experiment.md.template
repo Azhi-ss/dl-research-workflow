@@ -2,51 +2,122 @@
 experiment_id: {{experiment_id}}
 status: active | completed | backlog
 created_at: {{timestamp}}
+priority: P0 | P1 | P2
+owner:
+reviewer:
+approver:
+blocked_by: []
+depends_on: []
+human_approval_required: yes | no
+last_updated_by:
+last_verified_at:
 tags:
   - ablation
   - hyperparameter
   - architecture
   - data
   - evaluation
-priority: P0 | P1 | P2
 ---
 
-# Experiment: {{experiment_id}}
+# 实验记录 · {{experiment_id}}
 
-## Hypothesis
+> 本文档回答：**这个实验要验证什么、如何复现、结果如何、是否继续。**
+> 如果一个新 AI 只读这一页，应该能判断这次实验值不值得继续投入。
 
-（我们要验证什么假设？）
+---
 
-## Related Work
+## 本实验回答的问题
 
-- 相关论文:
-- 相关实验:
-- 参考代码:
+- **实验问题**：
+- **为什么现在做这个实验**：
+- **它服务于哪一个计划优先项**：
 
-## Variables
+---
+
+## 当前状态快照
+
+- **状态**：active / completed / backlog
+- **一句话假设**：
+- **当前进度**：未开始 / 进行中 / 已完成 / 已暂停
+- **最近一次更新**：
+- **结果一句话总结**：
+
+---
+
+## 成功 / 失败判定
+
+### 成功标准
+
+- 
+- 
+
+### 失败信号
+
+- 
+- 
+
+### Go / No-Go 决策条件
+
+- **继续推进，如果**：
+- **停止或降级优先级，如果**：
+
+---
+
+## 基线与比较对象
+
+- **基线实验 / 方法**：
+- **比较维度**：性能 / 稳定性 / 成本 / 复杂度 / 可复现性
+- **为什么这个比较是公平的**：
+
+---
+
+## 数据集与评估协议
+
+### 数据集与切分
+
+- **dataset name / source**：
+- **dataset version / snapshot**：
+- **license / usage boundary**：
+- **split protocol**：
+- **leakage checks**：
+- **data filtering / known caveats**：
+
+### 评估协议
+
+- **eval protocol / benchmark**：
+- **repeated runs / seeds**：
+- **significance method**：
+- **failure cases / error analysis**：
+- **公平性 / 鲁棒性 / 成本补充评估（可选）**：
+
+---
+
+## 变量与指标
+
+### Variables
 
 | Variable | Values | Description |
 |----------|--------|-------------|
 |          |        |             |
 
-## Baseline
-
-- 基线实验 ID:
-- 基线指标:
-
-## Metrics
+### Metrics
 
 | Metric | Description | Target |
 |--------|-------------|--------|
 |        |             |        |
 
-## Configuration
+---
+
+## 复现配置
 
 ```yaml
 seed: {{seed}}
 batch_size:
 learning_rate:
 epochs:
+data:
+model:
+trainer:
 ```
 
 ### Hardware
@@ -61,65 +132,89 @@ epochs:
 - Python version:
 - Key packages:
 
-## Execution Log
+---
 
-- 开始时间:
-- 结束时间:
-- 总耗时:
-- GPU 小时:
-- 重试次数:
-- 早停原因:
+## 产出路径
 
-## Results
+- **配置文件**：
+- **日志目录**：
+- **checkpoint 目录**：
+- **结果文件**：
+- **可视化文件**：
+- **error analysis / failure cases**：
 
-| Metric | Value | vs Baseline |
-|--------|-------|-------------|
-|        |       |             |
+---
 
-### Checkpoints
+## 成本与可交付性
 
-- Best checkpoint:
-- Final checkpoint:
+- **training cost / runtime budget**：
+- **actual runtime**：
+- **peak GPU memory**：
+- **inference / export notes（可选）**：
 
-### Visualizations
+---
 
-- 训练曲线:
-- 样本输出:
+## 执行日志（只写关键节点）
 
-## Analysis
+- `{{timestamp}}` 创建实验记录
+- 
+- 
 
-### Key Observations
+---
 
-1.
-2.
-3.
+## 结果快照
 
-### Statistical Significance
+| Metric | Value | vs Baseline | Notes |
+|--------|-------|-------------|-------|
+|        |       |             |       |
 
-（是否做了显著性检验？结果如何？）
+### 关键观察
 
-### Unexpected Findings
+1. 
+2. 
+3. 
 
-（有什么意外发现？）
+---
 
-## Conclusions
+## 分析
 
-### Hypothesis Accepted / Rejected?
+### 为什么会这样
 
-（我们的假设成立吗？为什么？）
+-
+-
 
-### What We Learned
+### 可信度判断
 
-1.
-2.
-3.
+- **结果是否稳定**：
+- **是否需要补跑 / 复验**：
+- **可能的混淆因素**：
 
-## Next Actions
+### 意外发现
 
-- [ ] 下一步实验 1
-- [ ] 下一步实验 2
+-
+-
 
-## Related Decisions
+---
 
-- 决策 1:
-- 决策 2:
+## 结论
+
+- **假设是否成立**：成立 / 不成立 / 尚不确定
+- **实验最终结论**：
+- **对主计划的影响**：
+
+---
+
+## 下一步行动
+
+- [ ] 
+- [ ] 
+- [ ] 
+
+---
+
+## 关联项
+
+- **关联计划**：`.workflow/research/plan.md`
+- **关联事件**：
+- **关联讨论**：
+- **关联参考资料**：
