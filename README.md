@@ -109,6 +109,40 @@ CLI 当前依赖 `jq`。如果未安装，`dl-workflow` 会在启动时提示缺
 
 ---
 
+## End-to-End Usage Flow · 完整使用流程
+
+推荐把这个 skill 当作一套轻量的 AI 研究交接循环来使用：
+
+1. **初始化项目状态**
+   - 新项目运行 `dl-workflow init`
+   - 已有项目运行 `dl-workflow init --integrate`
+
+2. **补齐核心上下文**
+   - 在 `AGENT.md` 写清项目目标、当前焦点、阻塞点和下一步
+   - 在 `.workflow/research/plan.md` 写清研究问题、假设、路线和评估方式
+   - 在 `.workflow/research/experiments/active/` 创建或更新当前实验记录
+
+3. **让 AI 按协议接手**
+   - 新 AI / 新会话先读 `AGENT.md`
+   - 再读 `plan.md`、活跃实验和最近事件
+   - 接手后先确认当前目标、阶段、阻塞点和下一步，而不是直接全仓扫描
+
+4. **研究过程中持续记录**
+   - 用 `dl-workflow event "描述"` 记录关键决策、实验结果、失败原因和阻塞点
+   - 用 `dl-workflow inspire "想法"` 记录暂时不做但值得保留的研究灵感
+   - 把实验设置、结果和结论写回实验记录
+
+5. **切换会话前压缩状态**
+   - 更新 `AGENT.md` 的当前焦点、阻塞点和下一步行动
+   - 必要时更新 `plan.md`、实验记录和 `.workflow/events/`
+   - 不要只把重要判断留在聊天记录里
+
+6. **项目变复杂后再使用高级辅助**
+   - 用 `parse-pdf` 创建论文解析工作区，但真实 PDF 解析仍由外部工具或人工完成
+   - 用 `summarize <daily|weekly>` 输出总结提示和保存约定，再由人或 AI 整理总结
+
+---
+
 ## Daily Workflow · 日常使用方式
 
 ### 1. 接手项目
@@ -200,8 +234,8 @@ AI 接手后应该能回答：
 | 命令 | 说明 |
 | --- | --- |
 | `dl-workflow parse-pdf <pdf-file> [paper-id]` | 为单个 PDF 创建论文解析工作区 |
-| `dl-workflow parse-pdf --all` | 为 `papers/pdf/` 下的 PDF 批量创建解析工作区 |
-| `dl-workflow summarize weekly` | 输出周总结提示和保存约定 |
+| `dl-workflow parse-pdf --all` | 为 `.workflow/references/papers/pdf/` 下的 PDF 批量创建解析工作区 |
+| `dl-workflow summarize <daily|weekly>` | 输出日总结或周总结提示和保存约定 |
 
 说明：
 
@@ -235,7 +269,7 @@ AI 接手后应该能回答：
 
 ### Template Suite · 模板系统
 
-当前提供 25 个模板，覆盖计划、实验、发现、总结、参考资料与跨 IDE 兼容入口等内容。
+当前提供 30 个模板，覆盖计划、实验、发现、总结、参考资料与跨 IDE 兼容入口等常见研究记录场景。
 
 新用户优先关注核心模板：
 
@@ -257,7 +291,7 @@ AI 接手后应该能回答：
 
 ### Summary Prompt Helper · 总结提示助手
 
-`summarize weekly` 只输出周总结提示和推荐保存位置。它不会自动读取所有文件并生成总结。
+`summarize <daily|weekly>` 只输出日总结或周总结提示和推荐保存位置。它不会自动读取所有文件并生成总结。
 
 你可以让 AI 根据提示读取 `.workflow/events/`、`.workflow/discussions/timeline.md` 和 `.workflow/research/experiments/` 后，再手动或半自动生成周总结。
 
@@ -304,7 +338,7 @@ AI 接手后应该能回答：
 - 重要决策用 `dl-workflow event` 记录
 - 每个实验都要写清楚目标、设置、结果、结论和下一步
 - 参考论文与 repo 要写摘要，不要只收藏链接
-- 定期生成周总结或阶段总结，把事件和实验结论压缩成更容易接手的状态
+- 定期整理周总结或阶段总结，把事件和实验结论压缩成更容易接手的状态
 
 ---
 
